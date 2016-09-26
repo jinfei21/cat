@@ -80,7 +80,7 @@ public class NotifyTaskBuilder implements TaskBuilder {
 	@Override
 	public boolean buildDailyTask(String name, String domainName, Date period) {
 		sendDailyReport(period);
-		sendVsMeiTuanReport(period);
+		//sendVsMeiTuanReport(period);
 		return true;
 	}
 

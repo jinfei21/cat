@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <app-comparison-config>
-   <app-comparison id="页面1" emails="yong.you@dianping.com">
+   <app-comparison id="页面1" emails="cat@pingan.com.cn">
       <item id="test1" command="page1.bin"/>
       <item id="test2" command="page2.bin"/>
    </app-comparison>
-   <app-comparison id="页面2" emails="yong.you@dianping.com">
+   <app-comparison id="页面2" emails="cat@pingan.com.cn">
       <item id="test3" command="page3.bin"/>
       <item id="test4" command="page4.bin"/>
    </app-comparison>

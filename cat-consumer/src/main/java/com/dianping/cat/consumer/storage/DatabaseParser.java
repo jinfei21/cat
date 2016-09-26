@@ -47,7 +47,24 @@ public class DatabaseParser implements LogEnabled {
 					database = new Database(name, ip);
 
 					m_connections.put(connection, database);
-				} else {
+				} else if(connection.contains("jdbc:postgresql://")){
+					String con = connection.split("jdbc:postgresql://")[1];
+					con = con.split("\\?")[0];
+					int index = con.indexOf(":");
+					String ip = "";
+
+					if (index < 0) {
+						ip = con.split("/")[0];
+					} else {
+						ip = con.substring(0, index);
+					}
+
+					String name = con.substring(con.indexOf("/") + 1);
+					database = new Database(name, ip);
+					
+					m_connections.put(connection, database);
+				}else {
+				
 					m_errorConnections.add(connection);
 					m_logger.info("Unrecognized jdbc connection string: " + connection);
 				}

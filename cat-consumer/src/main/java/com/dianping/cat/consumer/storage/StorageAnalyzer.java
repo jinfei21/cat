@@ -96,7 +96,7 @@ public class StorageAnalyzer extends AbstractMessageAnalyzer<StorageReport> impl
 			if (message instanceof Event) {
 				String type = message.getType();
 
-				if (type.equals("Cache.memcached.server")) {
+				if (type.equals("Cache.memcached.server") || type.equals("Cache.redis.server")) {
 					ip = message.getName();
 					int index = ip.indexOf(":");
 

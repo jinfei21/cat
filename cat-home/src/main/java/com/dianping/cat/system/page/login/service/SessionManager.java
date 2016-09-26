@@ -11,7 +11,11 @@ public class SessionManager implements ISessionManager<Session, Token, Credentia
 
 		if (account != null && password != null) {
 			// default no authenticate
-			return new Token(account, account);
+			if("catadmin".equals(account)&&"root".equals(password)){
+				return new Token(account, account);
+			}else{
+				return null;
+			}
 		} else {
 			return null;
 		}

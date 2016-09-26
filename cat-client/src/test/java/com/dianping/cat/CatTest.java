@@ -11,6 +11,9 @@ public class CatTest {
 
 	@Test
 	public void test() {
+		Cat.logMetricForCount("logMetricForCount", 4);
+		Cat.logMetric("logMetric", "test", "test");
+		
 		Cat.newTransaction("logTransaction", "logTransaction");
 		Cat.newEvent("logEvent", "logEvent");
 		Cat.newTrace("logTrace", "logTrace");
@@ -20,7 +23,7 @@ public class CatTest {
 		Cat.logError("message", cause);
 		Cat.logTrace("logTrace", "<trace>");
 		Cat.logTrace("logTrace", "<trace>", Trace.SUCCESS, "data");
-		Cat.logMetric("logMetric", "test", "test");
+		
 		Cat.logMetricForCount("logMetricForCount");
 		Cat.logMetricForCount("logMetricForCount", 4);
 		Cat.logMetricForDuration("logMetricForDuration", 100);

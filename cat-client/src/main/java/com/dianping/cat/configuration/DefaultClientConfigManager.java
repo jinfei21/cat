@@ -25,6 +25,8 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 	private static final String PROPERTIES_CLIENT_XML = "/META-INF/app.properties";
 	
 	private static final String XML = "/data/appdatas/cat/client.xml";
+	
+	private static final String CAT_XML = "/META-INF/cat/server.xml";
 
 	private Logger m_logger;
 
@@ -210,7 +212,28 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 					globalConfig = DefaultSaxParser.parse(xml);
 					m_logger.info(String.format("Global config file(%s) found.", configFile));
 				} else {
-					m_logger.warn(String.format("Global config file(%s) not found, IGNORED.", configFile));
+					InputStream in = null;
+					try {
+						in = Thread.currentThread().getContextClassLoader().getResourceAsStream(CAT_XML);
+	
+						if (in == null) {
+							in = Cat.class.getResourceAsStream(CAT_XML);
+						}
+						
+						String xml = Files.forIO().readFrom(in, "utf-8");
+						globalConfig = DefaultSaxParser.parse(xml);
+						m_logger.info(String.format("Global config file(%s) found.", configFile));
+					}catch(Exception e) {						
+						m_logger.warn(String.format("Global config file(%s) not found, IGNORED.", e));
+					} finally {
+						if (in != null) {
+							try {
+								in.close();
+							} catch (Exception e) {
+							}
+						}
+					}
+					
 				}
 			}
 
