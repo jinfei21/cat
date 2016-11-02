@@ -144,7 +144,7 @@ public class IpService implements Initializable {
 
 	private void initAreaMap(InputStream areaFile) {
 		try {
-			BufferedReader areaReader = new BufferedReader(new InputStreamReader(areaFile));
+			BufferedReader areaReader = new BufferedReader(new InputStreamReader(areaFile,"UTF-8"));
 			String line;
 			String[] strs;
 			int id;
@@ -170,7 +170,7 @@ public class IpService implements Initializable {
 
 	private void initCorpMap(InputStream corpFile) {
 		try {
-			BufferedReader corpReader = new BufferedReader(new InputStreamReader(corpFile));
+			BufferedReader corpReader = new BufferedReader(new InputStreamReader(corpFile,"UTF-8"));
 			String line;
 			String[] strs;
 			int id;
@@ -193,7 +193,7 @@ public class IpService implements Initializable {
 
 	private void initForeignAreaMap(InputStream areaFile) {
 		try {
-			BufferedReader areaReader = new BufferedReader(new InputStreamReader(areaFile));
+			BufferedReader areaReader = new BufferedReader(new InputStreamReader(areaFile,"UTF-8"));
 			String line;
 			String[] strs;
 			String[] ids;
@@ -221,7 +221,7 @@ public class IpService implements Initializable {
 		BufferedReader reader = null;
 
 		try {
-			reader = new BufferedReader(new InputStreamReader(ipFile));
+			reader = new BufferedReader(new InputStreamReader(ipFile,"UTF-8"));
 			int size = Integer.parseInt(reader.readLine());
 			String line;
 			String[] strs;
