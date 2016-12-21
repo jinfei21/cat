@@ -9,6 +9,7 @@ import org.unidal.helper.Files;
 import org.unidal.helper.Urls;
 import org.xml.sax.SAXException;
 
+import com.dianping.cat.Cat;
 import com.dianping.cat.config.server.ServerConfigManager;
 import com.dianping.cat.helper.TimeHelper;
 import com.dianping.cat.message.Message;
@@ -57,7 +58,8 @@ public class RemoteLogViewService extends BaseRemoteModelService<String> {
 			}
 			t.setStatus(Message.SUCCESS);
 		} catch (Exception e) {
-			t.setStatus(Message.SUCCESS);
+			t.setStatus(e);
+			Cat.logError(e);
 		} finally {
 			t.complete();
 		}

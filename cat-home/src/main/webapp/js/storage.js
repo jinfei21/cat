@@ -22,8 +22,7 @@ $(document).delegate('.storage_graph_link', 'click', function(e){
 				type: "get",
 				url: anchor.href,
 				success : function(response, textStatus) {
-					cell.style.display = 'block';
-					cell.parentNode.style.display = 'block';
+					$(cell).parent().removeClass('hidden');
 					cell.innerHTML = response;
 					
 					var data = $('#countTrendMeta',cell).text();
@@ -38,14 +37,13 @@ $(document).delegate('.storage_graph_link', 'click', function(e){
 					data = $('#errorTrendMeta',cell).text();
 					graphLineChart($('#errorTrend',cell)[0],eval('('+data+')'));
 					
-					data = $('#piechartMeta',cell).text();
-					graphPieChart($('#piechart',cell)[0],eval('('+data+')'));
+					//data = $('#piechartMeta',cell).text();
+					//graphPieChart($('#piechart',cell)[0],eval('('+data+')'));
 				}
 			});
 		}
 	} else {
 		anchor.innerHTML = '[:: show ::]';
-		cell.style.display = 'none';		
-		cell.parentNode.style.display = 'none';
+		$(cell).parent().addClass('hidden');
 	}	
 })

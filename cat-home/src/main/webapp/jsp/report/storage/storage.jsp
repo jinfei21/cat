@@ -106,7 +106,7 @@
 			</td>
 		</c:forEach>
 		</tr>
-		<tr class="graphs"><td colspan="${w:size(model.operations)*4 + 2}" style="display:none"><div id="${domain.key}" style="display:none"></div></td></tr>
+		<tr class="graphs"><td colspan="${w:size(model.operations)*4 + 2}" class="hidden"><div id="${domain.key}" ></div></td></tr>
 		<tr style="display:none"></tr>
 	</c:forEach>
 </table>

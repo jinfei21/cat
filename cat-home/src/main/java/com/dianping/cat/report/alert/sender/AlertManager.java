@@ -160,6 +160,9 @@ public class AlertManager implements Initializable {
 			}
 			String content = m_splitterManager.process(rawContent, channel);
 			List<String> receivers = m_contactorManager.queryReceivers(alert.getContactGroup(), channel, type);
+			if(receivers == null || receivers.isEmpty()){
+				return false;
+			}
 			message = new AlertMessageEntity(group, title, type, content, receivers);
 
 			if (m_senderManager.sendAlert(channel, message)) {
@@ -188,6 +191,9 @@ public class AlertManager implements Initializable {
 			String title = "[告警恢复] [告警类型 " + generateTypeStr(type) + "][" + group + " " + alert.getMetric() + "]";
 			String content = "[告警已恢复][恢复时间]" + currentMinute;
 			List<String> receivers = m_contactorManager.queryReceivers(alert.getContactGroup(), channel, type);
+			if(receivers == null || receivers.isEmpty()){
+				return false;
+			}
 			AlertMessageEntity message = new AlertMessageEntity(group, title, type, content, receivers);
 
 			if (m_senderManager.sendAlert(channel, message)) {
