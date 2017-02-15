@@ -63,8 +63,18 @@ public class DatabaseParser implements LogEnabled {
 					database = new Database(name, ip);
 					
 					m_connections.put(connection, database);
-				}else {
-				
+				}else if(connection.contains("jdbc:oracle:")){
+					String con = connection.split("jdbc:oracle:\\w{4}:@")[1];
+					String[] cons = con.split(":");
+					String ip = "";
+					String name = "";
+					if(cons.length > 2){			
+						 ip = cons[0];
+						 name = cons[2];
+					}
+					database = new Database(name, ip);
+					m_connections.put(connection, database);
+				}else{				
 					m_errorConnections.add(connection);
 					m_logger.info("Unrecognized jdbc connection string: " + connection);
 				}
@@ -75,6 +85,7 @@ public class DatabaseParser implements LogEnabled {
 		}
 		return database;
 	}
+	
 
 	public void showErrorCon() {
 		if (!m_connections.isEmpty()) {

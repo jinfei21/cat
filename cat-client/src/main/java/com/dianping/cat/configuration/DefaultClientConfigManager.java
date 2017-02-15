@@ -2,6 +2,7 @@ package com.dianping.cat.configuration;
 
 import java.io.File;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
+import org.springframework.core.io.InputStreamSource;
 import org.unidal.helper.Files;
 
 import com.dianping.cat.Cat;
@@ -26,11 +28,15 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 	
 	private static final String XML = "/data/appdatas/cat/client.xml";
 	
-	private static final String CAT_XML = "/META-INF/cat/server.xml";
+	private static final String CAT_XML = "cat-server.xml";
+	
+	private static final String PROPERTIES_XML = "cat-app.properties";
 
 	private Logger m_logger;
 
 	private ClientConfig m_config;
+	
+	private String appName;
 
 	@Override
 	public void enableLogging(Logger logger) {
@@ -116,7 +122,7 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 	}
 
 	private ClientConfig loadConfigFromEnviroment() {
-		String appName = loadProjectName();
+		appName = loadProjectName();
 
 		if (appName != null) {
 			ClientConfig config = new ClientConfig();
@@ -177,7 +183,41 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 					return null;
 				}
 			} else {
-				m_logger.info(String.format("Can't find app.properties in %s", PROPERTIES_CLIENT_XML));
+				
+				in = Thread.currentThread().getContextClassLoader().getResourceAsStream(PROPERTIES_XML);
+
+				if (in == null) {
+					in = Cat.class.getResourceAsStream(PROPERTIES_XML);
+				}
+				
+				if (in != null) {
+					Properties prop = new Properties();
+
+					prop.load(in);
+
+					appName = prop.getProperty("app.name");
+					if (appName != null) {
+						m_logger.info(String.format("Find domain name %s from app.properties.", appName));
+					} else {
+						m_logger.info(String.format("Can't find app.name from app.properties."));
+						return null;
+					}
+				}else{
+					in = Thread.currentThread().getContextClassLoader().getResourceAsStream("pizza.properties");
+					if(in == null){
+						in = Cat.class.getResourceAsStream("pizza.properties");
+					}
+					
+					if(in != null){
+						Properties prop = new Properties();
+
+						prop.load(in);
+
+						appName = prop.getProperty("pizza.app.name");
+
+					}
+					m_logger.info(String.format("Can't find app.properties in %s", PROPERTIES_XML));
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -204,7 +244,9 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 		try {
 			ClientConfig globalConfig = null;
 			ClientConfig clientConfig = null;
-
+			// load the client configure from Java class-path
+			clientConfig = loadConfigFromEnviroment();
+			
 			if (configFile != null) {
 				if (configFile.exists()) {
 					String xml = Files.forIO().readFrom(configFile.getCanonicalFile(), "utf-8");
@@ -220,8 +262,25 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 							in = Cat.class.getResourceAsStream(CAT_XML);
 						}
 						
-						String xml = Files.forIO().readFrom(in, "utf-8");
-						globalConfig = DefaultSaxParser.parse(xml);
+						if(in != null){
+						
+							String xml = Files.forIO().readFrom(in, "utf-8");
+							globalConfig = DefaultSaxParser.parse(xml);
+						}else{
+							try{
+								Class clazz = Class.forName("com.pingan.pafa.pizza.spring.PizzaResource");
+								Class[] paramTypes = {String.class};							
+								Constructor cons = clazz.getConstructor(paramTypes);
+								
+								Object[] params = {"papp/"+appName+".cat.xml"};
+								InputStreamSource resource = (InputStreamSource )cons.newInstance(params);	
+								in = resource.getInputStream();
+								String xml = Files.forIO().readFrom(in, "utf-8");
+								globalConfig = DefaultSaxParser.parse(xml);
+							}catch(Throwable t){
+								m_logger.warn("pafa error get xml!", t);
+							}
+						}
 						m_logger.info(String.format("Global config file(%s) found.", configFile));
 					}catch(Exception e) {						
 						m_logger.warn(String.format("Global config file(%s) not found, IGNORED.", e));
@@ -237,8 +296,7 @@ public class DefaultClientConfigManager implements LogEnabled, ClientConfigManag
 				}
 			}
 
-			// load the client configure from Java class-path
-			clientConfig = loadConfigFromEnviroment();
+
 
 			if (clientConfig == null) {
 				clientConfig = loadConfigFromXml();
